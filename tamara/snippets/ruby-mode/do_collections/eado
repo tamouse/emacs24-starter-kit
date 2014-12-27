@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: each do |...| ... end
+# contributor: Tamara Temple <tamouse@gmail.com>
+# --
+each do |${1:var}|
+  $0
+end

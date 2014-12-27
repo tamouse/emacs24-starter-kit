@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: select option
+# --
+<option value="${1:value}"${2: ${3:disabled}}${4: ${5:selected}}>${6:text}</option>
