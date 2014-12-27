@@ -1,6 +1,7 @@
 * Personal Emacs Settings
 ** Additional Startup Kits
 #+begin_src emacs-lisp
+(starter-kit-load "yasnippet")
 (starter-kit-load "ruby")
 (starter-kit-load "perl")
 #+end_src
@@ -119,4 +120,8 @@
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-charcoal-black)
+#+end_src
+** Servers
+#+begin_src emacs-lisp
+  (server-start)
 #+end_src
