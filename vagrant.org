@@ -1,0 +1,94 @@
+* Vagrant User Personal Emacs Settings
+
+  The vagrant user running in a VM will not have a display for their
+  use, as it runs in a terminal. Getting rid of all the cruft of
+  servers, colour themes, and so on.
+
+** Additional Startup Kits
+#+begin_src emacs-lisp
+(starter-kit-load "yasnippet")
+(starter-kit-load "ruby")
+(starter-kit-load "perl")
+#+end_src
+** Other Packages
+- markdown mode
+  #+begin_src emacs-lisp
+    (startup-kit-install-if-needed 'markdown-mode)
+    (require 'markdown-mode)
+    (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
+  #+end_src
+  
+- time-stamp
+  #+begin_src emacs-lisp
+    (require 'time-stamp)
+    (add-hook 'write-file-hooks 'time-stamp)
+    (setq time-stamp-active t)
+  #+end_src
+
+** Key Bindings
+#+begin_src emacs-lisp
+  (define-key global-map "\C-x\C-c" 'save-buffer-kill-buffer)
+  (define-key global-map "\C-x4q" 'save-buffers-kill-terminal)
+  (define-key global-map (kbd "M-SPC") 'fixup-whitespace)
+  (define-key global-map "\C-x\C-o" 'delete-blank-lines)
+  (define-key global-map "\C-cf" 'toggle-text-mode-auto-fill)
+  (define-key global-map "\C-cc" 'org-capture)
+#+end_src
+
+** Functions
+#+name: defuns
+#+begin_src emacs-lisp
+;; Because I like using ^x^c to save the buffer and kill the file
+(defun save-buffer-kill-buffer ()
+  (interactive)
+  (if (and
+       (buffer-file-name (current-buffer))
+       (buffer-modified-p (current-buffer)))
+      (save-buffer (current-buffer)))
+  (kill-buffer (current-buffer)))
+
+
+;;; return the time as YYYY-MM-DD HH:MM
+(defun jekyll-time-string ()
+  "Return the current time or given time in epoc seconds as a string used by Jekyll posts: YYYY-MM-DD HH:MM"
+  (format-time-string "%Y-%m-%d %H:%M")
+  )
+
+;;; insert jekyll time string
+(defun insert-jekyll-time-string ()
+  "Insert the formatted Jekyll time string"
+  (interactive)
+  (insert (concat "date: " (jekyll-time-string)))
+  )
+
+;;; snakify
+(defun snakify-text (start end)
+  "Convert text to a snake-case symbol"
+  (interactive "r")
+  (progn
+    (downcase-region start end)
+    (subst-char-in-region start end ?  ?_)
+    )
+  )
+#+end_src
+
+** Personal Settings
+#+begin_src emacs-lisp
+(setq user-mail-address "tamouse@gmail.com")
+(setq user-organization "Tamara Temple Web Development")
+(setq user-home-page    "http://blog.tamouse.org")
+(setq user-signature    (concat user-full-name " <" user-mail-address ">"))
+#+end_src
+
+** Misc Settings
+#+begin_src emacs-lisp
+(global-linum-mode t)
+(setq fill-column 80)
+(electric-pair-mode t)
+(setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
+                                        ; sublime 
+
+
+(setq scss-compile-at-save nil) ; this bugs me so much
+#+end_src
+
