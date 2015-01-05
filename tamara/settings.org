@@ -3,6 +3,9 @@
 #+begin_src emacs-lisp
 (starter-kit-load "yasnippet")
 (starter-kit-load "ruby")
+(setq ruby-use-smie nil)
+(setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
+                                        ; sublime 
 (starter-kit-load "perl")
 #+end_src
 ** Other Packages
@@ -37,6 +40,19 @@
 (add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
     
   #+end_src
+
+- sass mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'sass-mode)
+    (require 'sass-mode)
+  #+end_src
+
+- scss mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'scss-mode)
+    (require 'scss-mode)
+    (setq scss-compile-at-save nil) ; this bugs me so much
+  #+end_src
   
 ** Key Bindings
 #+begin_src emacs-lisp
@@ -46,6 +62,7 @@
   (define-key global-map "\C-x\C-o" 'delete-blank-lines)
   (define-key global-map "\C-cf" 'toggle-text-mode-auto-fill)
   (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\M-g-RET" 'goto-line)
 #+end_src
 
 ** Functions
@@ -107,11 +124,6 @@
 (setq fill-column 80)
 (electric-pair-mode t)
 (setq org-default-notes-file (expand-file-name "~/Dropbox/notes.org"))
-(setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
-                                        ; sublime 
-
-
-(setq scss-compile-at-save nil) ; this bugs me so much
 #+end_src
 
 ** Colour Themes

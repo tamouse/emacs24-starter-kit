@@ -1,19 +1,17 @@
-* Vagrant User Personal Emacs Settings
-
-  The vagrant user running in a VM will not have a display for their
-  use, as it runs in a terminal. Getting rid of all the cruft of
-  servers, colour themes, and so on.
-
+* Personal Emacs Settings
 ** Additional Startup Kits
 #+begin_src emacs-lisp
 (starter-kit-load "yasnippet")
 (starter-kit-load "ruby")
+(setq ruby-use-smie nil)
+(setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
+                                        ; sublime 
 (starter-kit-load "perl")
 #+end_src
 ** Other Packages
 - markdown mode
   #+begin_src emacs-lisp
-    (startup-kit-install-if-needed 'markdown-mode)
+    (starter-kit-install-if-needed 'markdown-mode)
     (require 'markdown-mode)
     (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
   #+end_src
@@ -25,6 +23,48 @@
     (setq time-stamp-active t)
   #+end_src
 
+- yasnippet
+  #+begin_src emacs-lisp
+    (require 'yasnippet)
+    (yas-global-mode 1)
+    (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/tamara/snippets"))
+    (yas-reload-all)
+  #+end_src
+  
+- apache mode
+  #+begin_src emacs-lisp
+(autoload 'apache-mode "apache-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.htaccess\\'"   . apache-mode))
+(add-to-list 'auto-mode-alist '("httpd\\.conf\\'"  . apache-mode))
+(add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
+(add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
+(add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
+    
+  #+end_src
+
+- sass mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'sass-mode)
+    (require 'sass-mode)
+  #+end_src
+
+- scss mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'scss-mode)
+    (require 'scss-mode)
+    (setq scss-compile-at-save nil) ; this bugs me so much
+  #+end_src
+
+- haml mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'haml-mode)
+  #+end_src
+
+- yaml mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'yaml-mode)
+  #+end_src
+    
 ** Key Bindings
 #+begin_src emacs-lisp
   (define-key global-map "\C-x\C-c" 'save-buffer-kill-buffer)
@@ -33,6 +73,7 @@
   (define-key global-map "\C-x\C-o" 'delete-blank-lines)
   (define-key global-map "\C-cf" 'toggle-text-mode-auto-fill)
   (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\M-g-RET" 'goto-line)
 #+end_src
 
 ** Functions
@@ -80,15 +121,18 @@
 (setq user-signature    (concat user-full-name " <" user-mail-address ">"))
 #+end_src
 
+** ERC Configuration
+#+begin_src emacs-lisp
+(require 'erc)
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+(setq erc-kill-buffer-on-part t)
+(setq erc-kill-queries-on-quit t)
+#+end_src
 ** Misc Settings
 #+begin_src emacs-lisp
+(menu-bar-mode -1)
 (global-linum-mode t)
 (setq fill-column 80)
 (electric-pair-mode t)
-(setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
-                                        ; sublime 
-
-
-(setq scss-compile-at-save nil) ; this bugs me so much
 #+end_src
 
