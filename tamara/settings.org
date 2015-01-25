@@ -1,3 +1,5 @@
+#+STARTUP: content
+
 * Personal Emacs Settings
 ** Additional Startup Kits
 #+begin_src emacs-lisp
@@ -6,7 +8,16 @@
 (setq ruby-use-smie nil)
 (setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
                                         ; sublime 
+;;; Usable hide/show support in ruby mode
+(add-to-list 'hs-special-modes-alist
+             '(ruby-mode
+               "\\(def\\|do\\|{\\)" "\\(end\\|end\\|}\\)" "#"
+               (lambda (arg) (ruby-end-of-block)) nil))
+
+
 (starter-kit-load "perl")
+(starter-kit-load "js")
+
 #+end_src
 ** Other Packages
 - markdown mode
@@ -63,6 +74,7 @@
   (define-key global-map "\C-cf" 'toggle-text-mode-auto-fill)
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\M-g-RET" 'goto-line)
+  (define-key global-map "\C-z" nil) ; i *HATE* this
 #+end_src
 
 ** Functions
@@ -100,6 +112,32 @@
     (subst-char-in-region start end ?  ?_)
     )
   )
+
+;;; camelize
+(defun camelize (s)
+  "Convert snakified string to CamelCase."
+  (interactive "s")
+  (if (stringp s)
+      (mapconcat 'capitalize (split-string s "_") nil)
+    nil)
+  )
+
+;;; camelize-file-name
+(defun camelize-file-name ()
+  "Convert the current buffer's file base name to CamelCase"
+  (interactive)
+  (if (stringp (buffer-file-name))
+      (camelize (file-name-base (buffer-file-name)))
+    nil)
+  )
+
+;;; indent-buffer does indent-region on the entire buffer
+(defun indent-buffer ()
+  (interactive)
+  (save-excursion
+    (indent-region (point-min) (point-max)))
+  )
+
 #+end_src
 
 ** Personal Settings

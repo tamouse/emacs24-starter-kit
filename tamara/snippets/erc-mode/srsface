@@ -1,5 +1,5 @@
-# -*- mode: snippet -*-
+# -*- mode: snippet; require-final-newline: nil -*-
 # name: srsface
 # key: srsface
 # --
-${1:before}ಠ_ಠ${2:after}
+ಠ_ಠ
