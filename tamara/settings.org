@@ -29,7 +29,7 @@
 - time-stamp
   #+begin_src emacs-lisp
     (require 'time-stamp)
-    (add-hook 'write-file-hooks 'time-stamp)
+    (add-hook 'before-save-hook 'time-stamp)
     (setq time-stamp-active t)
   #+end_src
 
