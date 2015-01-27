@@ -1,7 +1,0 @@
-# -*- mode: snippet; require-final-newline: nil -*-
-# name: Rails Controller Class
-# key: controller
-# --
-class ${1:`(camelize-file-name)`} < ApplicationController
-$0
-end

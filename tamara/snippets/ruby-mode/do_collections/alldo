@@ -1,7 +1,0 @@
-# -*- mode: snippet; require-final-newline: nil -*-
-# name: all do
-#contributor: Tamara Temple <tamouse@gmail.com>
-# --
-all? do |${1:vars}|
-$0
-end

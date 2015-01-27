@@ -20,6 +20,36 @@
 
 #+end_src
 ** Other Packages
+- org mode
+  #+begin_src emacs-lisp
+    (setq org-default-notes-file (expand-file-name "~/Dropbox/org/notes.org"))
+    (setq org-directory "~/Dropbox/org/")
+    (setq org-capture-templates
+          (quote
+           (("j" "Journal Entry" entry
+             (file+datetree+prompt "~/Dropbox/journal.org")
+             "* %^{headline}\n" :clock-in t :clock-resume t)
+            ("c" "Capture Clipboard" entry
+             (file "~/Dropbox/notes.org")
+             "* %?\n  %x\n  link: %a\n  captured_on: %U\n" :empty-lines 1)
+            ("I" "Insulin Dose" entry
+             (file+datetree+prompt "~/Dropbox/todo/glucose.org")
+             "* %^{insulin dosage?} %^g")
+            ("s" "selection" entry
+             (file "~/Dropbox/notes.org")
+             "* %? %^g\n  %i\n  link: %a\n  captured_on: %U\n" :empty-lines 1)
+            ("Q" "Quotes" entry
+             (file "~/Dropbox/quotes.org")
+             "* %^{Headline:}\n%i\n%a\n" :empty-lines 1)
+            ("t" "todo" entry
+             (file "~/Dropbox/todo/inbox.org")
+             "* TODO %?\n  created_on: %U\n  link: %a\n" :clock-in t :clock-resume t))))
+    (setq org-export-backends (quote (ascii html icalendar latex md)))
+
+  #+end_src
+
+
+
 - markdown mode
   #+begin_src emacs-lisp
     (require 'markdown-mode)
@@ -33,14 +63,6 @@
     (setq time-stamp-active t)
   #+end_src
 
-- yasnippet
-  #+begin_src emacs-lisp
-    (require 'yasnippet)
-    (yas-global-mode 1)
-    (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/tamara/snippets"))
-    (yas-reload-all)
-  #+end_src
-  
 - apache mode
   #+begin_src emacs-lisp
 (autoload 'apache-mode "apache-mode" nil t)
@@ -71,7 +93,7 @@
   (define-key global-map "\C-x4q" 'save-buffers-kill-terminal)
   (define-key global-map (kbd "M-SPC") 'fixup-whitespace)
   (define-key global-map "\C-x\C-o" 'delete-blank-lines)
-  (define-key global-map "\C-cf" 'toggle-text-mode-auto-fill)
+  (define-key global-map "\C-cf" 'auto-fill-mode)
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\M-g-RET" 'goto-line)
   (define-key global-map "\C-z" nil) ; i *HATE* this
@@ -154,6 +176,18 @@
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 (setq erc-kill-buffer-on-part t)
 (setq erc-kill-queries-on-quit t)
+(setq erc-autojoin-channels-alist
+   (quote
+    (("freenode.net" "#emacs" "#ruby" "#jekyll" "#RubyonRails-offtopic" "#callahans" "#RubyOnRails" "#rubyonrails-offtopic" "#ruby.mn")
+     ("foonetic.net" "#xkcdfurs"))))
+(setq erc-autojoin-delay 5)
+(setq erc-email-userid "tamouse@gmail.com")
+(setq erc-modules
+   (quote
+    (autoaway autojoin button completion fill irccontrols list log match menu move-to-prompt netsplit networks noncommands readonly ring stamp track)))
+(setq erc-nick "pontiki")
+(setq erc-nick-uniquifier "_")
+(setq erc-user-full-name user-full-name)
 #+end_src
 ** Misc Settings
 #+begin_src emacs-lisp
@@ -161,12 +195,15 @@
 (global-linum-mode t)
 (setq fill-column 80)
 (electric-pair-mode t)
-(setq org-default-notes-file (expand-file-name "~/Dropbox/notes.org"))
+(setq ido-auto-merge-delay-time 3)
+(setq netrc-file "~/.netrc")
+
+
 #+end_src
 
 ** Colour Themes
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/tamara/color-theme-6.6.0")
+(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-charcoal-black)
