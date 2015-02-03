@@ -22,30 +22,38 @@
 ** Other Packages
 - org mode
   #+begin_src emacs-lisp
-    (setq org-default-notes-file (expand-file-name "~/Dropbox/org/notes.org"))
+    (eval-after-load "org"
+      '(require 'ox-md nil t))
+
     (setq org-directory "~/Dropbox/org/")
+    (setq org-default-notes-file (concat org-directory "notes.org"))
     (setq org-capture-templates
           (quote
            (("j" "Journal Entry" entry
-             (file+datetree+prompt "~/Dropbox/journal.org")
+             (file+datetree+prompt (concat org-directory "journal.org" ) )
              "* %^{headline}\n" :clock-in t :clock-resume t)
             ("c" "Capture Clipboard" entry
-             (file "~/Dropbox/notes.org")
-             "* %?\n  %x\n  link: %a\n  captured_on: %U\n" :empty-lines 1)
+             (file (concat org-directory "notes.org"))
+             "* %?\n  %x\n  captured_on: %U\n" :empty-lines 1)
             ("I" "Insulin Dose" entry
-             (file+datetree+prompt "~/Dropbox/todo/glucose.org")
-             "* %^{insulin dosage?} %^g")
+             (file+datetree+prompt (concat org-directory "glucose.org"))
+             "* %U  Insulin: %^{insulin dosage?} %?")
+            ("G" "Glucose Reading" entry
+             (file+datetree+prompt (concat org-directory "glucose.org"))
+             "* %U  Glucose Reading: %^{glucose reading?} %?")
             ("s" "selection" entry
-             (file "~/Dropbox/notes.org")
-             "* %? %^g\n  %i\n  link: %a\n  captured_on: %U\n" :empty-lines 1)
+             (file (concat org-directory "notes.org"))
+             "* %? %^g\n  %i\n  captured_on: %U\n" :empty-lines 1)
             ("Q" "Quotes" entry
-             (file "~/Dropbox/quotes.org")
+             (file (concat org-directory "quotes.org"))
              "* %^{Headline:}\n%i\n%a\n" :empty-lines 1)
             ("t" "todo" entry
-             (file "~/Dropbox/todo/inbox.org")
+             (file (concat org-directory "inbox.org"))
              "* TODO %?\n  created_on: %U\n  link: %a\n" :clock-in t :clock-resume t))))
+
     (setq org-export-backends (quote (ascii html icalendar latex md)))
 
+    (setq org-agenda-diary-file (concat org-directory "diary.org"))
   #+end_src
 
 
@@ -95,8 +103,9 @@
   (define-key global-map "\C-x\C-o" 'delete-blank-lines)
   (define-key global-map "\C-cf" 'auto-fill-mode)
   (define-key global-map "\C-cc" 'org-capture)
-  (define-key global-map "\M-g-RET" 'goto-line)
+  (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-z" nil) ; i *HATE* this
+  (define-key global-map "\C-cm" 'magit-status)
 #+end_src
 
 ** Functions
