@@ -1,6 +1,7 @@
 #+STARTUP: content
 
 * Personal Emacs Settings
+
 ** Additional Startup Kits
 #+begin_src emacs-lisp
 (starter-kit-load "yasnippet")
@@ -16,11 +17,21 @@
 
 
 (starter-kit-load "perl")
-(starter-kit-load "js")
+;;; (starter-kit-load "js") ;;; this still uses espresso
 
 #+end_src
 ** Other Packages
-- org mode
+*** js-mode
+  #+begin_src emacs-lisp
+    (autoload 'js-mode "Javascript" "Start js-mode" t)
+    (add-to-list 'auto-mode-alist '("\\.js" . js-mode))
+    (add-to-list 'auto-mode-alist '("\\.json" . js-mode))
+    (add-hook 'js-mode-hook 'turn-on-paredit)
+    (setq js-indent-level 2)
+  #+end_src
+  
+
+*** org mode
   #+begin_src emacs-lisp
     (eval-after-load "org"
       '(require 'ox-md nil t))
@@ -32,6 +43,9 @@
            (("j" "Journal Entry" entry
              (file+datetree+prompt (concat org-directory "journal.org" ) )
              "* %^{headline}\n" :clock-in t :clock-resume t)
+            ("d" "Learning Diary Entry" entry
+             (file+datetree (concat org-directory "process_journal.org"))
+             "* %?\n  captured_on: %U\n\n  " :empty-lines 1)
             ("c" "Capture Clipboard" entry
              (file (concat org-directory "notes.org"))
              "* %?\n  %x\n  captured_on: %U\n" :empty-lines 1)
@@ -58,20 +72,20 @@
 
 
 
-- markdown mode
+*** markdown mode
   #+begin_src emacs-lisp
     (require 'markdown-mode)
     (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
   #+end_src
   
-- time-stamp
+*** time-stamp
   #+begin_src emacs-lisp
     (require 'time-stamp)
     (add-hook 'before-save-hook 'time-stamp)
     (setq time-stamp-active t)
   #+end_src
 
-- apache mode
+*** apache mode
   #+begin_src emacs-lisp
 (autoload 'apache-mode "apache-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.htaccess\\'"   . apache-mode))
@@ -82,18 +96,47 @@
     
   #+end_src
 
-- sass mode
+*** sass mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'sass-mode)
     (require 'sass-mode)
   #+end_src
 
-- scss mode
+*** scss mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'scss-mode)
     (require 'scss-mode)
     (setq scss-compile-at-save nil) ; this bugs me so much
   #+end_src
+
+*** helm mode
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'helm-mode)
+    (require 'helm)
+    (require 'helm-config)
+    ;(global-set-key (kbd "C-c h") 'helm-command-prefix)
+    (define-key helm-map (kbd "C-z") 'helm-select-action)
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+    (when (executable-find "curl")
+      (setq helm-google-suggest-use-curl-p t))
+    (setq helm-split-window-in-side-p t
+          helm-move-to-line-cycle-in-source t
+          helm-ff-search-library-in-sexp t
+          helm-scroll-amount 8
+          helm-ff-file-name-history-use-recentf t)
+    (helm-mode 1)
+  #+end_src
+
+*** projectile
+  #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'projectile)
+    (starter-kit-install-if-needed 'helm-projectile) 
+    (projectile-global-mode)
+    (setq projectile-completion-system 'helm)
+    ;; (helm-projectile-on)
+  #+end_src
+  
   
 ** Key Bindings
 #+begin_src emacs-lisp
@@ -104,8 +147,13 @@
   (define-key global-map "\C-cf" 'auto-fill-mode)
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\C-ca" 'org-agenda)
-  (define-key global-map "\C-z" nil) ; i *HATE* this
   (define-key global-map "\C-cm" 'magit-status)
+
+  ;;; helm rebindings
+
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
 #+end_src
 
 ** Functions
@@ -181,22 +229,33 @@
 
 ** ERC Configuration
 #+begin_src emacs-lisp
-(require 'erc)
-(setq erc-hide-list '("JOIN" "PART" "QUIT"))
-(setq erc-kill-buffer-on-part t)
-(setq erc-kill-queries-on-quit t)
-(setq erc-autojoin-channels-alist
-   (quote
-    (("freenode.net" "#emacs" "#ruby" "#jekyll" "#RubyonRails-offtopic" "#callahans" "#RubyOnRails" "#rubyonrails-offtopic" "#ruby.mn")
-     ("foonetic.net" "#xkcdfurs"))))
-(setq erc-autojoin-delay 5)
-(setq erc-email-userid "tamouse@gmail.com")
-(setq erc-modules
-   (quote
-    (autoaway autojoin button completion fill irccontrols list log match menu move-to-prompt netsplit networks noncommands readonly ring stamp track)))
-(setq erc-nick "pontiki")
-(setq erc-nick-uniquifier "_")
-(setq erc-user-full-name user-full-name)
+  (require 'erc)
+  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+  (setq erc-kill-buffer-on-part t)
+  (setq erc-kill-queries-on-quit t)
+  (setq erc-autojoin-channels-alist
+     (quote
+      (("freenode.net" "#emacs" "#ruby" "#jekyll" "#RubyonRails-offtopic" "#callahans" "#RubyOnRails" "#rubyonrails-offtopic" "#ruby.mn")
+       ("foonetic.net" "#xkcdfurs"))))
+  (setq erc-autojoin-delay 5)
+  (setq erc-modules
+     (quote
+      (autoaway autojoin button completion fill irccontrols list log match menu move-to-prompt netsplit networks noncommands readonly ring stamp track)))
+  (setq erc-nick "pontiki"
+        erc-nick-uniquifier "_"
+        erc-user-full-name user-full-name
+        erc-email-userid "tamouse@gmail.com"
+        erc-keywords
+        '("tam"
+          "tamara"
+          "tamouse"
+          "mousie"
+          "mousey"
+          "squeeq"
+          "sqeeq"
+          )
+        erc-fools '("Grimes" "Gridley")
+        )
 #+end_src
 ** Misc Settings
 #+begin_src emacs-lisp
