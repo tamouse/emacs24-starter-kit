@@ -74,6 +74,7 @@
 
 *** markdown mode
   #+begin_src emacs-lisp
+    (starter-kit-install-if-needed 'markdown-mode)
     (require 'markdown-mode)
     (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
   #+end_src
@@ -111,7 +112,7 @@
 
 *** helm mode
   #+begin_src emacs-lisp
-    (starter-kit-install-if-needed 'helm-mode)
+    (starter-kit-install-if-needed 'helm)
     (require 'helm)
     (require 'helm-config)
     ;(global-set-key (kbd "C-c h") 'helm-command-prefix)
@@ -271,10 +272,11 @@
 
 ** Colour Themes
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-charcoal-black)
+  (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0")
+  (starter-kit-install-if-needed 'color-theme)
+  (require 'color-theme)
+  (color-theme-initialize)
+  (color-theme-charcoal-black)
 #+end_src
 ** Servers
 #+begin_src emacs-lisp

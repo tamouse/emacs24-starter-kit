@@ -57,3 +57,5 @@ agent/*
 literate-starter-kit/
 literate-starter-kit.tar
 /bookmarks
+/ido.last
+/projectile-bookmarks.eld
