@@ -1,38 +1,51 @@
 #+STARTUP: content
 
 * Personal Emacs Settings
+
 ** Additional Startup Kits
 #+begin_src emacs-lisp
-  (starter-kit-load "yasnippet")
-  (starter-kit-load "ruby")
-  (setq ruby-use-smie nil)
-  (setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
-                                          ; sublime 
-  ;;; Usable hide/show support in ruby mode
-  (add-to-list 'hs-special-modes-alist
-               '(ruby-mode
-                 "\\(def\\|do\\|{\\)" "\\(end\\|end\\|}\\)" "#"
-                 (lambda (arg) (ruby-end-of-block)) nil))
-  (starter-kit-load "perl")
-  (starter-kit-load "js")
+(starter-kit-load "yasnippet")
+(starter-kit-load "ruby")
+(setq ruby-use-smie nil)
+(setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
+                                        ; sublime 
+;;; Usable hide/show support in ruby mode
+(add-to-list 'hs-special-modes-alist
+             '(ruby-mode
+               "\\(def\\|do\\|{\\)" "\\(end\\|end\\|}\\)" "#"
+               (lambda (arg) (ruby-end-of-block)) nil))
+
+
+(starter-kit-load "perl")
+;;; (starter-kit-load "js") ;;; this still uses espresso
 
 #+end_src
 ** Other Packages
-- markdown mode
+*** js-mode
+  #+begin_src emacs-lisp
+    (autoload 'js-mode "Javascript" "Start js-mode" t)
+    (add-to-list 'auto-mode-alist '("\\.js" . js-mode))
+    (add-to-list 'auto-mode-alist '("\\.json" . js-mode))
+    (add-hook 'js-mode-hook 'turn-on-paredit)
+    (setq js-indent-level 2)
+  #+end_src
+  
+
+*** markdown mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'markdown-mode)
     (require 'markdown-mode)
     (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
   #+end_src
   
-- time-stamp
+*** time-stamp
   #+begin_src emacs-lisp
     (require 'time-stamp)
-    (add-hook 'write-file-hooks 'time-stamp)
+    (add-hook 'before-save-hook 'time-stamp)
     (setq time-stamp-active t)
   #+end_src
 
-- apache mode
+*** apache mode
   #+begin_src emacs-lisp
 (autoload 'apache-mode "apache-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.htaccess\\'"   . apache-mode))
@@ -43,102 +56,126 @@
     
   #+end_src
 
-- sass mode
+*** sass mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'sass-mode)
     (require 'sass-mode)
   #+end_src
 
-- scss mode
+*** scss mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'scss-mode)
     (require 'scss-mode)
     (setq scss-compile-at-save nil) ; this bugs me so much
   #+end_src
 
-- haml mode
+*** helm mode
   #+begin_src emacs-lisp
-    (starter-kit-install-if-needed 'haml-mode)
+    (starter-kit-install-if-needed 'helm)
+    (require 'helm)
+    (require 'helm-config)
+    ;(global-set-key (kbd "C-c h") 'helm-command-prefix)
+    (define-key helm-map (kbd "C-z") 'helm-select-action)
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+    (when (executable-find "curl")
+      (setq helm-google-suggest-use-curl-p t))
+    (setq helm-split-window-in-side-p t
+          helm-move-to-line-cycle-in-source t
+          helm-ff-search-library-in-sexp t
+          helm-scroll-amount 8
+          helm-ff-file-name-history-use-recentf t)
+    (helm-mode 1)
   #+end_src
 
-- yaml mode
+*** projectile
   #+begin_src emacs-lisp
-    (starter-kit-install-if-needed 'yaml-mode)
+    (starter-kit-install-if-needed 'projectile)
+    (starter-kit-install-if-needed 'helm-projectile) 
+    (projectile-global-mode)
+    (setq projectile-completion-system 'helm)
+    ;; (helm-projectile-on)
   #+end_src
-    
+  
+  
 ** Key Bindings
 #+begin_src emacs-lisp
   (define-key global-map "\C-x\C-c" 'save-buffer-kill-buffer)
   (define-key global-map "\C-x4q" 'save-buffers-kill-terminal)
   (define-key global-map (kbd "M-SPC") 'fixup-whitespace)
   (define-key global-map "\C-x\C-o" 'delete-blank-lines)
-  (define-key global-map "\C-cf" 'toggle-text-mode-auto-fill)
-  (define-key global-map "\M-g-RET" 'goto-line)
+  (define-key global-map "\C-cf" 'auto-fill-mode)
+  (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cm" 'magit-status)
+
+  ;;; helm rebindings
+
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
 #+end_src
 
 ** Functions
 #+name: defuns
 #+begin_src emacs-lisp
-  ;; Because I like using ^x^c to save the buffer and kill the file
-  (defun save-buffer-kill-buffer ()
-    (interactive)
-    (if (and
-         (buffer-file-name (current-buffer))
-         (buffer-modified-p (current-buffer)))
-        (save-buffer (current-buffer)))
-    (kill-buffer (current-buffer)))
+;; Because I like using ^x^c to save the buffer and kill the file
+(defun save-buffer-kill-buffer ()
+  (interactive)
+  (if (and
+       (buffer-file-name (current-buffer))
+       (buffer-modified-p (current-buffer)))
+      (save-buffer (current-buffer)))
+  (kill-buffer (current-buffer)))
 
 
-  ;;; return the time as YYYY-MM-DD HH:MM
-  (defun jekyll-time-string ()
-    "Return the current time or given time in epoc seconds as a string used by Jekyll posts: YYYY-MM-DD HH:MM"
-    (format-time-string "%Y-%m-%d %H:%M")
+;;; return the time as YYYY-MM-DD HH:MM
+(defun jekyll-time-string ()
+  "Return the current time or given time in epoc seconds as a string used by Jekyll posts: YYYY-MM-DD HH:MM"
+  (format-time-string "%Y-%m-%d %H:%M")
+  )
+
+;;; insert jekyll time string
+(defun insert-jekyll-time-string ()
+  "Insert the formatted Jekyll time string"
+  (interactive)
+  (insert (concat "date: " (jekyll-time-string)))
+  )
+
+;;; snakify
+(defun snakify-text (start end)
+  "Convert text to a snake-case symbol"
+  (interactive "r")
+  (progn
+    (downcase-region start end)
+    (subst-char-in-region start end ?  ?_)
     )
+  )
 
-  ;;; insert jekyll time string
-  (defun insert-jekyll-time-string ()
-    "Insert the formatted Jekyll time string"
-    (interactive)
-    (insert (concat "date: " (jekyll-time-string)))
-    )
+;;; camelize
+(defun camelize (s)
+  "Convert snakified string to CamelCase."
+  (interactive "s")
+  (if (stringp s)
+      (mapconcat 'capitalize (split-string s "_") nil)
+    nil)
+  )
 
-  ;;; snakify
-  (defun snakify-text (start end)
-    "Convert text to a snake-case symbol"
-    (interactive "r")
-    (progn
-      (downcase-region start end)
-      (subst-char-in-region start end ?  ?_)
-      )
-    )
+;;; camelize-file-name
+(defun camelize-file-name ()
+  "Convert the current buffer's file base name to CamelCase"
+  (interactive)
+  (if (stringp (buffer-file-name))
+      (camelize (file-name-base (buffer-file-name)))
+    nil)
+  )
 
-  ;;; camelize
-  (defun camelize (s)
-    "Convert snakified string to CamelCase."
-    (interactive "s")
-    (if (stringp s)
-        (mapconcat 'capitalize (split-string s "_") nil)
-      nil)
-    )
-
-  ;;; camelize-file-name
-  (defun camelize-file-name ()
-    "Convert the current buffer's file base name to CamelCase"
-    (interactive)
-    (if (stringp (buffer-file-name))
-        (camelize (file-name-base (buffer-file-name)))
-      nil)
-    )
-
-  ;;; indent-buffer does indent-region on the entire buffer
-  (defun indent-buffer ()
-    (interactive)
-    (save-excursion
-      (indent-region (point-min) (point-max)))
-    )
-
-
+;;; indent-buffer does indent-region on the entire buffer
+(defun indent-buffer ()
+  (interactive)
+  (save-excursion
+    (indent-region (point-min) (point-max)))
+  )
 
 #+end_src
 
@@ -152,10 +189,11 @@
 
 ** Misc Settings
 #+begin_src emacs-lisp
-(menu-bar-mode -1)
+(menu-bar-mode nil)
 (global-linum-mode t)
 (setq fill-column 80)
 (electric-pair-mode t)
+(setq ido-auto-merge-delay-time 3)
 (setq netrc-file "~/.netrc")
 #+end_src
 
