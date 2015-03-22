@@ -8,7 +8,7 @@
 (starter-kit-load "ruby")
 (setq ruby-use-smie nil)
 (setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
-                                        ; sublime 
+                                        ; sublime
 ;;; Usable hide/show support in ruby mode
 (add-to-list 'hs-special-modes-alist
              '(ruby-mode
@@ -21,6 +21,17 @@
 
 #+end_src
 ** Other Packages
+*** all
+    #+begin_src emacs-lisp
+      (add-hook 'before-save-hook 'delete-trailing-whitespace)
+    #+end_src
+
+*** lorem-ipsum
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'lorem-ipsum)
+    #+end_src
+
+
 *** js-mode
   #+begin_src emacs-lisp
     (autoload 'js-mode "Javascript" "Start js-mode" t)
@@ -29,7 +40,7 @@
     (add-hook 'js-mode-hook 'turn-on-paredit)
     (setq js-indent-level 2)
   #+end_src
-  
+
 *** org mode
   #+begin_src emacs-lisp
     (eval-after-load "org"
@@ -78,7 +89,7 @@
     (require 'markdown-mode)
     (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
   #+end_src
-  
+
 *** time-stamp
   #+begin_src emacs-lisp
     (require 'time-stamp)
@@ -94,7 +105,7 @@
 (add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
 (add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
-    
+
   #+end_src
 
 *** sass mode
@@ -109,6 +120,35 @@
     (require 'scss-mode)
     (setq scss-compile-at-save nil) ; this bugs me so much
   #+end_src
+
+*** web mode
+    #+begin_src emacs-lisp
+      ;; (starter-kit-install-if-needed 'web-mode)
+      ;; (require 'web-mode)
+      ;; (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+      ;; (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+      ;; (setq web-mode-engines-alist
+      ;;       '(("php" . "\\.phtml\\'")
+      ;;         ("blade" . "\\.blade\\.")))
+      ;; (defun tpt/my-web-mode-hook ()
+      ;;   "Hooks for web-mode"
+      ;;   (setq web-mode-markup-indent-offset 2)
+      ;;   (setq web-mode-css-indent-offset 2)
+      ;;   (setq web-mode-code-indent-offset 2)
+      ;;   (setq web-mode-style-padding 2)
+      ;;   (setq web-mode-script-padding 2)
+      ;;   (setq web-mode-enable-css-colorization t)
+
+      ;;   )
+      ;; (add-hook 'web-mode-hook 'tpt/my-web-mode-hook)
+
+    #+end_src
 
 *** helm mode
   #+begin_src emacs-lisp
@@ -132,19 +172,22 @@
 *** projectile
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'projectile)
-    (starter-kit-install-if-needed 'helm-projectile) 
+    (starter-kit-install-if-needed 'helm-projectile)
     (projectile-global-mode)
-    (setq projectile-completion-system 'helm)
+    (setq projectile-completion-system 'helm
+          projectile-switch-project-action 'projectile-dired
+          projectile-mode-line '(:eval (format " Prj[%s]" (projectile-project-name))))
+
     ;; (helm-projectile-on)
   #+end_src
-  
+
 *** weechat
     #+begin_src emacs-lisp
       (starter-kit-install-if-needed 'weechat)
       (require 's)
       (require 'weechat)
     #+end_src
-  
+
 ** Key Bindings
 #+begin_src emacs-lisp
   (define-key global-map "\C-x\C-c" 'save-buffer-kill-buffer)

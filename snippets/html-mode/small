@@ -1,7 +1,7 @@
 # -*- mode: snippet; require-final-newline: nil -*-
-# name: footer
-# key: footer
+# name: small
+# key: small
+# group: typography
 # binding: direct-keybinding
-# group: sectioning
 # --
-<footer$1>$0</footer>
+<small$1>$0</small>
