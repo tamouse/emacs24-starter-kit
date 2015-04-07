@@ -31,13 +31,12 @@
       (starter-kit-install-if-needed 'lorem-ipsum)
     #+end_src
 
-
 *** js-mode
   #+begin_src emacs-lisp
     (autoload 'js-mode "Javascript" "Start js-mode" t)
     (add-to-list 'auto-mode-alist '("\\.js" . js-mode))
     (add-to-list 'auto-mode-alist '("\\.json" . js-mode))
-    (add-hook 'js-mode-hook 'turn-on-paredit)
+    ;; (add-hook 'js-mode-hook 'turn-on-paredit)
     (setq js-indent-level 2)
   #+end_src
 
@@ -82,7 +81,6 @@
     (setq org-agenda-diary-file (concat org-directory "diary.org"))
   #+end_src
 
-
 *** markdown mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'markdown-mode)
@@ -121,35 +119,6 @@
     (setq scss-compile-at-save nil) ; this bugs me so much
   #+end_src
 
-*** web mode
-    #+begin_src emacs-lisp
-      ;; (starter-kit-install-if-needed 'web-mode)
-      ;; (require 'web-mode)
-      ;; (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-      ;; (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-      ;; (setq web-mode-engines-alist
-      ;;       '(("php" . "\\.phtml\\'")
-      ;;         ("blade" . "\\.blade\\.")))
-      ;; (defun tpt/my-web-mode-hook ()
-      ;;   "Hooks for web-mode"
-      ;;   (setq web-mode-markup-indent-offset 2)
-      ;;   (setq web-mode-css-indent-offset 2)
-      ;;   (setq web-mode-code-indent-offset 2)
-      ;;   (setq web-mode-style-padding 2)
-      ;;   (setq web-mode-script-padding 2)
-      ;;   (setq web-mode-enable-css-colorization t)
-
-      ;;   )
-      ;; (add-hook 'web-mode-hook 'tpt/my-web-mode-hook)
-
-    #+end_src
-
 *** helm mode
   #+begin_src emacs-lisp
     (starter-kit-install-if-needed 'helm)
@@ -181,13 +150,6 @@
     ;; (helm-projectile-on)
   #+end_src
 
-*** weechat
-    #+begin_src emacs-lisp
-      (starter-kit-install-if-needed 'weechat)
-      (require 's)
-      (require 'weechat)
-    #+end_src
-
 ** Key Bindings
 #+begin_src emacs-lisp
   (define-key global-map "\C-x\C-c" 'save-buffer-kill-buffer)
@@ -204,10 +166,13 @@
   (global-unset-key (kbd "C-x C-z"))
 
   ;;; helm rebindings
-
   (global-set-key (kbd "M-y") 'helm-show-kill-ring)
   (global-set-key (kbd "C-x b") 'helm-mini)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+  ;; others
+  (global-set-key (kbd "C-x :") 'comment-or-uncomment-region)
+  (global-set-key (kbd "C-x C-i") 'indent-buffer)
 #+end_src
 
 ** Functions
