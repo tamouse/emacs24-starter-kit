@@ -3,12 +3,11 @@
 # key: blog
 # --
 #+STARTUP: showall indent
-#+STARTUP: hidestars
-#+BEGIN_SRC markdown
+#+OPTIONS: toc:nil
+#+BEGIN_HTML
 ---
 layout: default
 title: ${1:title}
-date: #{2:`(format-time-string "%F %H:%M")`}
+date: ${2:`(format-time-string "%F %H:%M")`}
 ---
-$0
 #+END_SRC

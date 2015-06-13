@@ -138,17 +138,34 @@
     (helm-mode 1)
   #+end_src
 
+*** gherkin
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'feature-mode)
+      (setq feature-default-language "en")
+      (require 'feature-mode)
+      (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
+
+    #+end_src
+
 *** projectile
   #+begin_src emacs-lisp
-    (starter-kit-install-if-needed 'projectile)
-    (starter-kit-install-if-needed 'helm-projectile)
-    (projectile-global-mode)
-    (setq projectile-completion-system 'helm
-          projectile-switch-project-action 'projectile-dired
-          projectile-mode-line '(:eval (format " Prj[%s]" (projectile-project-name))))
+        (starter-kit-install-if-needed 'projectile)
+        (starter-kit-install-if-needed 'helm-projectile)
+        (projectile-global-mode)
+        (setq projectile-completion-system 'helm
+              projectile-switch-project-action 'projectile-dired
+              projectile-mode-line '(:eval (format " Prj[%s]" (projectile-project-name)))
+              )
 
-    ;; (helm-projectile-on)
+        ;; (helm-projectile-on)
   #+end_src
+
+*** flycheck
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'flycheck)
+      (add-hook 'after-init-hook #'global-flycheck-mode)
+    #+end_src
+
 
 ** Key Bindings
 #+begin_src emacs-lisp
@@ -171,7 +188,7 @@
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
   ;; others
-  (global-set-key (kbd "C-x :") 'comment-or-uncomment-region)
+  (global-set-key (kbd "C-x /") 'comment-or-uncomment-region)
   (global-set-key (kbd "C-x C-i") 'indent-buffer)
 #+end_src
 
