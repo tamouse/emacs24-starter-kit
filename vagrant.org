@@ -8,7 +8,7 @@
 (starter-kit-load "ruby")
 (setq ruby-use-smie nil)
 (setq ruby-deep-indent-paren nil)       ; make indents in ruby more normal, a la
-                                        ; sublime 
+                                        ; sublime
 ;;; Usable hide/show support in ruby mode
 (add-to-list 'hs-special-modes-alist
              '(ruby-mode
@@ -21,15 +21,65 @@
 
 #+end_src
 ** Other Packages
+*** all
+    #+begin_src emacs-lisp
+      (add-hook 'before-save-hook 'delete-trailing-whitespace)
+    #+end_src
+
+*** lorem-ipsum
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'lorem-ipsum)
+    #+end_src
+
 *** js-mode
   #+begin_src emacs-lisp
     (autoload 'js-mode "Javascript" "Start js-mode" t)
     (add-to-list 'auto-mode-alist '("\\.js" . js-mode))
     (add-to-list 'auto-mode-alist '("\\.json" . js-mode))
-    (add-hook 'js-mode-hook 'turn-on-paredit)
+    ;; (add-hook 'js-mode-hook 'turn-on-paredit)
     (setq js-indent-level 2)
   #+end_src
-  
+
+*** org mode
+  #+begin_src emacs-lisp
+    (eval-after-load "org"
+      '(require 'ox-md nil t))
+
+    (setq org-directory "~/Dropbox/org/")
+    (setq org-default-notes-file (concat org-directory "notes.org"))
+    (setq org-capture-templates
+          (quote
+           (
+            ("P" "Personal Care (Insulin, Glucode, Medications, etc)" entry
+             (file+datetree+prompt (concat org-directory "personal_care.org"))
+             "* %U %?")
+            ("c" "Capture Clipboard" entry
+             (file (concat org-directory "notes.org"))
+             "* %?\n  %x\n  captured_on: %U\n" :empty-lines 1)
+            ("j" "Journal Entry" entry
+             (file+datetree+prompt (concat org-directory "journal.org" ) )
+             "* %^{headline}\n" :clock-in t :clock-resume t)
+            ("n" "note" entry
+             (file (concat org-directory "notes.org"))
+             "* %?\n\n  capture date: %U\n" :empty-lines 1)
+            ("p" "Process Journal Entry" entry
+             (file+datetree (concat org-directory "process_journal.org"))
+             "* %?\n  captured_on: %U\n\n  " :empty-lines 1)
+            ("q" "Quotes" entry
+             (file (concat org-directory "quotes.org"))
+             "* %^{Headline:}\n%i\n%a\n" :empty-lines 1)
+            ("s" "selection" entry
+             (file (concat org-directory "notes.org"))
+             "* %? %^g\n  %i\n  captured_on: %U\n" :empty-lines 1)
+            ("t" "todo" entry
+             (file (concat org-directory "inbox.org"))
+             "* TODO %?\n  created_on: %U\n  link: %a\n" :clock-in t :clock-resume t)
+            )))
+
+    (setq org-export-backends (quote (ascii html icalendar latex md)))
+
+    (setq org-agenda-diary-file (concat org-directory "diary.org"))
+  #+end_src
 
 *** markdown mode
   #+begin_src emacs-lisp
@@ -37,7 +87,7 @@
     (require 'markdown-mode)
     (add-to-list 'auto-mode-alist '("\\.\\(md\\|markdown\\)" . markdown-mode))
   #+end_src
-  
+
 *** time-stamp
   #+begin_src emacs-lisp
     (require 'time-stamp)
@@ -53,7 +103,7 @@
 (add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
 (add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
-    
+
   #+end_src
 
 *** sass mode
@@ -88,16 +138,35 @@
     (helm-mode 1)
   #+end_src
 
+*** gherkin
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'feature-mode)
+      (setq feature-default-language "en")
+      (require 'feature-mode)
+      (add-to-list 'auto-mode-alist '("\\.feature$" . feature-mode))
+
+    #+end_src
+
 *** projectile
   #+begin_src emacs-lisp
-    (starter-kit-install-if-needed 'projectile)
-    (starter-kit-install-if-needed 'helm-projectile) 
-    (projectile-global-mode)
-    (setq projectile-completion-system 'helm)
-    ;; (helm-projectile-on)
+        (starter-kit-install-if-needed 'projectile)
+        (starter-kit-install-if-needed 'helm-projectile)
+        (projectile-global-mode)
+        (setq projectile-completion-system 'helm
+              projectile-switch-project-action 'projectile-dired
+              projectile-mode-line '(:eval (format " Prj[%s]" (projectile-project-name)))
+              )
+
+        ;; (helm-projectile-on)
   #+end_src
-  
-  
+
+*** flycheck
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'flycheck)
+      (add-hook 'after-init-hook #'global-flycheck-mode)
+    #+end_src
+
+
 ** Key Bindings
 #+begin_src emacs-lisp
   (define-key global-map "\C-x\C-c" 'save-buffer-kill-buffer)
@@ -109,74 +178,98 @@
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cm" 'magit-status)
 
-  ;;; helm rebindings
+  ;;; these piss me off so much
+  (global-unset-key (kbd "C-z"))
+  (global-unset-key (kbd "C-x C-z"))
 
+  ;;; helm rebindings
   (global-set-key (kbd "M-y") 'helm-show-kill-ring)
   (global-set-key (kbd "C-x b") 'helm-mini)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+  ;; others
+  (global-set-key (kbd "C-x /") 'comment-or-uncomment-line-or-region)
+  (global-set-key (kbd "C-x C-i") 'indent-buffer)
 #+end_src
 
 ** Functions
 #+name: defuns
 #+begin_src emacs-lisp
-;; Because I like using ^x^c to save the buffer and kill the file
-(defun save-buffer-kill-buffer ()
-  (interactive)
-  (if (and
-       (buffer-file-name (current-buffer))
-       (buffer-modified-p (current-buffer)))
-      (save-buffer (current-buffer)))
-  (kill-buffer (current-buffer)))
+  ;; Because I like using ^x^c to save the buffer and kill the file
+  (defun save-buffer-kill-buffer ()
+    (interactive)
+    (if (and
+         (buffer-file-name (current-buffer))
+         (buffer-modified-p (current-buffer)))
+        (save-buffer (current-buffer)))
+    (kill-buffer (current-buffer)))
 
 
-;;; return the time as YYYY-MM-DD HH:MM
-(defun jekyll-time-string ()
-  "Return the current time or given time in epoc seconds as a string used by Jekyll posts: YYYY-MM-DD HH:MM"
-  (format-time-string "%Y-%m-%d %H:%M")
-  )
-
-;;; insert jekyll time string
-(defun insert-jekyll-time-string ()
-  "Insert the formatted Jekyll time string"
-  (interactive)
-  (insert (concat "date: " (jekyll-time-string)))
-  )
-
-;;; snakify
-(defun snakify-text (start end)
-  "Convert text to a snake-case symbol"
-  (interactive "r")
-  (progn
-    (downcase-region start end)
-    (subst-char-in-region start end ?  ?_)
+  ;;; return the time as YYYY-MM-DD HH:MM
+  (defun jekyll-time-string ()
+    "Return the current time or given time in epoc seconds as a string used by Jekyll posts: YYYY-MM-DD HH:MM"
+    (format-time-string "%Y-%m-%d %H:%M")
     )
-  )
 
-;;; camelize
-(defun camelize (s)
-  "Convert snakified string to CamelCase."
-  (interactive "s")
-  (if (stringp s)
-      (mapconcat 'capitalize (split-string s "_") nil)
-    nil)
-  )
+  ;;; insert jekyll time string
+  (defun insert-jekyll-time-string ()
+    "Insert the formatted Jekyll time string"
+    (interactive)
+    (insert (concat "date: " (jekyll-time-string)))
+    )
 
-;;; camelize-file-name
-(defun camelize-file-name ()
-  "Convert the current buffer's file base name to CamelCase"
-  (interactive)
-  (if (stringp (buffer-file-name))
-      (camelize (file-name-base (buffer-file-name)))
-    nil)
-  )
+  ;;; snakify
+  (defun snakify-text (start end)
+    "Convert text to a snake-case symbol"
+    (interactive "r")
+    (progn
+      (downcase-region start end)
+      (subst-char-in-region start end ?  ?_)
+      )
+    )
 
-;;; indent-buffer does indent-region on the entire buffer
-(defun indent-buffer ()
-  (interactive)
-  (save-excursion
-    (indent-region (point-min) (point-max)))
-  )
+  ;;; camelize
+  (defun camelize (s)
+    "Convert snakified string to CamelCase."
+    (interactive "s")
+    (if (stringp s)
+        (mapconcat 'capitalize (split-string s "_") nil)
+      nil)
+    )
 
+  ;;; camelize-file-name
+  (defun camelize-file-name ()
+    "Convert the current buffer's file base name to CamelCase"
+    (interactive)
+    (if (stringp (buffer-file-name))
+        (camelize (file-name-base (buffer-file-name)))
+      nil)
+    )
+
+  ;;; indent-buffer does indent-region on the entire buffer
+  (defun indent-buffer ()
+    (interactive)
+    (save-excursion
+      (indent-region (point-min) (point-max)))
+    )
+
+  ;;; make comment-or-uncomment work with lines or regions
+  (defun comment-or-uncomment-line-or-region ()
+    (interactive)
+    (let (start end )
+      (if mark-active
+          (progn
+            (setq start (mark))
+            (setq end (point))
+            )
+        (progn
+          (setq start (line-beginning-position))
+          (setq end (line-end-position))
+          )
+        )
+      (comment-or-uncomment-region start end)
+      )
+    )
 #+end_src
 
 ** Personal Settings
@@ -187,13 +280,44 @@
 (setq user-signature    (concat user-full-name " <" user-mail-address ">"))
 #+end_src
 
+** ERC Configuration
+#+begin_src emacs-lisp
+  (require 'erc)
+  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+  (setq erc-kill-buffer-on-part t)
+  (setq erc-kill-queries-on-quit t)
+  (setq erc-autojoin-channels-alist
+     (quote
+      (("freenode.net" "#emacs" "#ruby" "#jekyll" "#RubyonRails-offtopic" "#callahans" "#RubyOnRails" "#rubyonrails-offtopic" "#ruby.mn")
+       ("foonetic.net" "#xkcdfurs"))))
+  (setq erc-autojoin-delay 5)
+  (setq erc-modules
+     (quote
+      (autoaway autojoin button completion fill irccontrols list log match menu move-to-prompt netsplit networks noncommands readonly ring stamp track)))
+  (setq erc-nick "pontiki"
+        erc-nick-uniquifier "_"
+        erc-user-full-name user-full-name
+        erc-email-userid "tamouse@gmail.com"
+        erc-keywords
+        '("\\btam\\b"
+          "\\btamara\\b"
+          "\\btamouse\\b"
+          "\\bmousie\\b"
+          "\\bmousey\b"
+          "\\bsqueeq\\b"
+          "\\bsqeeq\\b"
+          )
+        erc-fools '("Grimes" "Gridley")
+        )
+#+end_src
 ** Misc Settings
 #+begin_src emacs-lisp
-(menu-bar-mode nil)
+(menu-bar-mode t)
 (global-linum-mode t)
 (setq fill-column 80)
 (electric-pair-mode t)
 (setq ido-auto-merge-delay-time 3)
 (setq netrc-file "~/.netrc")
-#+end_src
 
+
+#+end_src
