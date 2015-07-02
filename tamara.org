@@ -26,6 +26,16 @@
       (add-hook 'before-save-hook 'delete-trailing-whitespace)
     #+end_src
 
+*** elixir
+
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'alchemist)
+    (package-install 'alchemist))
+  (require 'alchemist)
+
+
+#+end_src
+
 *** lorem-ipsum
     #+begin_src emacs-lisp
       (starter-kit-install-if-needed 'lorem-ipsum)
