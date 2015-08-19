@@ -176,6 +176,12 @@
       (add-hook 'after-init-hook #'global-flycheck-mode)
     #+end_src
 
+*** stylus
+    #+begin_src emacs-lisp
+      (starter-kit-install-if-needed 'stylus-mode)
+      (require 'stylus-mode)
+    #+end_src
+
 
 ** Key Bindings
 #+begin_src emacs-lisp
@@ -200,6 +206,8 @@
   ;; others
   (global-set-key (kbd "C-x /") 'comment-or-uncomment-line-or-region)
   (global-set-key (kbd "C-x C-i") 'indent-buffer)
+  (define-key global-map (kbd "C-x :") 'tpt/align-ruby-hash)
+
 #+end_src
 
 ** Functions
@@ -280,6 +288,12 @@
       (comment-or-uncomment-region start end)
       )
     )
+
+  ;; Make new ruby hash syntax align nicely
+  (defun tpt/align-ruby-hash (beg end)
+    (interactive "r")
+    (align-regexp beg end "\\(\\s-*\\)\\(:\\s-+\\)\\(.\\)" 2 2 nil)
+    )
 #+end_src
 
 ** Personal Settings
@@ -342,5 +356,8 @@
 #+end_src
 ** Servers
 #+begin_src emacs-lisp
-  (server-start)
+  (require 'server)
+  (unless (server-running-p)
+    (server-start)
+    )
 #+end_src
