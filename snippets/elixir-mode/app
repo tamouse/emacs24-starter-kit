@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: Application
+# author: Tamara Temple <tamouse@gmail.com>
 # --
 defmodule ${1:MyApp} do
 use Application
